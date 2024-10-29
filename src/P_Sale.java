@@ -1,6 +1,9 @@
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -94,7 +97,7 @@ public class P_Sale {
         
     }
     
-    public boolean editClientData(P_Sale sale){
+    public boolean editSale(P_Sale sale){
         PreparedStatement ps;
         
         String editQuery = "UPDATE `sale` SET `property_id`=?,`client_id`=?,`final_price`=?,`sale_date`=? WHERE `id`=?";
@@ -115,7 +118,7 @@ public class P_Sale {
         }
     }
     
-    public boolean deleteClient(int saleId){
+    public boolean deleteSale(int saleId){
         PreparedStatement ps;
         
         String deleteQuery = "DELETE FROM `sale` WHERE `id`=?";
@@ -131,4 +134,33 @@ public class P_Sale {
             return false;
         }
     }
+    
+    
+    public ArrayList<P_Sale> salesList(){
+        ArrayList<P_Sale> list = new ArrayList<>();
+        
+        Statement st;
+        ResultSet rs;
+        
+        String selectQuery = "SELECT * FROM `sale`";
+        
+        try {
+            st = THE_Connection.getTheConnection().createStatement();
+            rs = st.executeQuery(selectQuery);
+            
+            P_Sale sale;
+            
+            while (rs.next()){
+                sale = new P_Sale(rs.getInt(1),rs.getInt(2),
+                rs.getInt(3),rs.getString(4), rs.getString(5));
+                list.add(sale);
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(P_Sale.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return list;
+    }
+    
 }
